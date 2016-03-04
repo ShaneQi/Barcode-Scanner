@@ -101,8 +101,8 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
 		}
 		
 		let metadataObj = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
-		let barCodeObject = videoPreviewLayer?.transformedMetadataObjectForMetadataObject(metadataObj as AVMetadataMachineReadableCodeObject) as! AVMetadataMachineReadableCodeObject
-		codeFrame.frame = barCodeObject.bounds
+//		let barCodeObject = videoPreviewLayer?.transformedMetadataObjectForMetadataObject(metadataObj as AVMetadataMachineReadableCodeObject) as! AVMetadataMachineReadableCodeObject
+//		codeFrame.frame = barCodeObject.bounds
 		if metadataObj.stringValue != nil {
 			if metadataObj.stringValue == "123456" {
 				UIApplication.sharedApplication().openURL(NSURL(string: "http://fishbase.org/summary/SpeciesSummary.php?ID=6017&AT=blue+tang")!)
