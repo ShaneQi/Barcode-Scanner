@@ -16,6 +16,8 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
 	var logo:UIImageView!
 	var captureSession:AVCaptureSession?
 	var videoPreviewLayer:AVCaptureVideoPreviewLayer?
+	var flashButton: UIButton!
+	var captureDevice:AVCaptureDevice!
 	
 	override func viewDidLoad() {
 		
@@ -37,9 +39,18 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
 		codeFrame.center = self.view.center
 		self.view.addSubview(codeFrame)
 		
+		flashButton = UIButton()
+		flashButton.frame.size = CGSize(width: 50, height: 50)
+		flashButton.center = CGPoint(x: self.view.frame.width/2, y: self.view.frame.height - 100)
+		flashButton.setImage(UIImage(named: "flash"), forState: .Normal)
+		flashButton.imageView?.contentMode = UIViewContentMode.ScaleAspectFit
+		self.view.addSubview(flashButton)
+		flashButton.addTarget(self, action: "toggleFlash", forControlEvents: UIControlEvents.TouchUpInside)
 		
 		var input:AnyObject! = nil
-		let captureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+		captureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+
+		
 		do {
 			input = try AVCaptureDeviceInput(device: captureDevice)
 		} catch {
@@ -59,19 +70,28 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
 		
 		captureSession?.startRunning()
 		
+		self.view.bringSubviewToFront(codeFrame)
+		self.view.bringSubviewToFront(navBar)
+		self.view.bringSubviewToFront(logo)
+		self.view.bringSubviewToFront(flashButton)
+	}
+	
+	func toggleFlash() {
 		
 		do {
 			try captureDevice.lockForConfiguration()
-			captureDevice.torchMode = AVCaptureTorchMode.On
-			captureDevice.flashMode = AVCaptureFlashMode.On
+			if captureDevice.torchMode == AVCaptureTorchMode.On && captureDevice.flashMode == AVCaptureFlashMode.On {
+				captureDevice.torchMode = AVCaptureTorchMode.Off
+				captureDevice.flashMode = AVCaptureFlashMode.Off
+			}else {
+				captureDevice.torchMode = AVCaptureTorchMode.On
+				captureDevice.flashMode = AVCaptureFlashMode.On
+			}
+
 			captureDevice.unlockForConfiguration()
 		} catch {
 			print(error)
 		}
-		
-		self.view.bringSubviewToFront(codeFrame)
-		self.view.bringSubviewToFront(navBar)
-		self.view.bringSubviewToFront(logo)
 	}
 	
 	func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
